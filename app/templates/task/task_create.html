@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block app_content %}
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Добавить задание</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Начальная позиция</h4>
+            <div id="board_start" style="width: 400px"></div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input class="btn btn-danger" type="button" value="Очистить" id="clear_start">
+                        </div>
+                        <div class="col-md-6">
+                            <input class="btn btn-info" type="button" value="Начальная позиция" id="start_start">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h4>Конечная позиция</h4>
+            <div id="board_end" style="width: 400px"></div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input class="btn btn-danger" type="button" value="Очистить" id="clear_end">
+                        </div>
+                        <div class="col-md-6">
+                            <input class="btn btn-info" type="button" value="Начальная позиция" id="start_end">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <form action method="post" class="form" role="form" id="boardForm" name="boardForm">
+        {{ form.hidden_tag() }}
+        <div class="row">
+            <div class="form-group col-md-6">
+                {{ form.id }}
+                {{ wtf.form_field(form.name, class='form-control') }}
+                {{ form.start_pos }}
+                {{ form.end_pos }}
+                {{ wtf.form_field(form.submit, class='btn btn-primary') }}
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block app_scripts %}
+    <script src="{{ url_for('task.static', filename='js/chessboard-1.0.0.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            let config = {
+                draggable: true,
+                dropOffBoard: 'trash',
+                sparePieces: true
+            }
+            let board_start = Chessboard('board_start', config)
+            let board_end = Chessboard('board_end', config)
+
+            $('#start_start').on('click', board_start.start)
+            $('#clear_start').on('click', board_start.clear)
+
+            $('#start_end').on('click', board_end.start)
+            $('#clear_end').on('click', board_end.clear)
+
+            document.getElementById('start_pos').value = board_start.fen();
+            document.getElementById('end_pos').value = board_end.fen();
+
+            $('#boardForm').submit(function () {
+                document.getElementById('start_pos').value = board_start.fen();
+                document.getElementById('end_pos').value = board_end.fen();
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block app_styles %}
+    <link rel="stylesheet" href="{{ url_for('task.static', filename='css/chessboard-1.0.0.css') }}">
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block app_content %}
+    <h2>Задача {{ task.name }}</h2>
+    <br>
+    <div class="row">
+        <div class="col-md-2 col-sm-offset-4">
+            <div id="board" style="width: 400px"></div>
+        </div>
+    </div>
+    <form action="{{ url_for('task.task', tournament_id=id, task_id=task.id) }}" method="post" class="form" role="form"
+          id="boardForm"
+          name="boardForm">
+        <input type="hidden" id="end_pos" name="end_pos" value="{{ task.start_pos }}">
+        <input type="submit" class="btn btn-primary" value="Проверить">
+    </form>
+{% endblock %}
+
+{% block app_scripts %}
+    <script src="{{ url_for('task.static', filename='js/chessboard-1.0.0.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            let config = {
+                draggable: true,
+                position: '{{ task.start_pos }}'
+            }
+
+            let board = Chessboard('board', config)
+
+            $('#boardForm').submit(function () {
+                document.getElementById('end_pos').value = board.fen();
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block app_styles %}
+    <link rel="stylesheet" href="{{ url_for('task.static', filename='css/chessboard-1.0.0.css') }}">
+{% endblock %}

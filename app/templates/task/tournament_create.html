@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block app_content %}
+    <h2>Добавить турнир</h2>
+    {% if list %}
+        <form action="{{ url_for('task.tournament_create') }}" method="post" class="form" role="form">
+            {{ form.hidden_tag() }}
+            {{ form.id }}
+            {{ wtf.form_field(form.name) }}
+            {% if list %}
+                <h4>Выберите задания:</h4>
+                {% for task in list %}
+                    <div class="form-check">
+                        <label>
+                            <input type="checkbox" name="tasks" value="{{ task[1] }}"> <span
+                                class="label-text">{{ task[0] }}</span>
+                        </label>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {{ wtf.form_field(form.submit, class='btn btn-primary') }}
+        </form>
+    {% else %}
+        <h4>Нельзя создать турнир когда нет ни одной задачи :(</h4>
+        <a href="{{ url_for('task.create') }}" class="btn btn-primary">Создать задачу</a>
+    {% endif %}
+{% endblock %}

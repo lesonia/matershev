@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h2>Список турниров</h2>
+    {% if tournaments %}
+        {% for tournaments_batch in tournaments | batch(4) %}
+            <div class="row">
+                {% for tournament in tournaments_batch %}
+                    <div class="col-md-3">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading clearfix">
+                                <h3 class="panel-title pull-left">{{ tournament.name }}</h3>
+                                <a class="btn btn-sm btn-danger pull-right"
+                                   href="{{ url_for('task.tournament_delete', id=tournament.id) }}">Удалить</a>
+                            </div>
+                            <div class="panel-body">
+                                Колличество задач: {{ tournament.tasks|length }}
+                            </div>
+                            <div class="panel-footer clearfix">
+                                <a href="{{ url_for('task.task', tournament_id=tournament.id, task_id=tournament.tasks[0].id) }}"
+                                   class="btn btn-sm btn-default pull-right">Запустить</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <h4>Турниров нету, играть не во что :(</h4>
+        <a href="{{ url_for('task.tournament_create') }}" class="btn btn-primary">Создать турнир</a>
+    {% endif %}
+{% endblock %}
